@@ -11,7 +11,7 @@
 
 ---
 
-## 📱 About This Fork
+## About This Fork
 
 This fork is designed for Firefox users—especially on **Firefox for Android**—who want a reliable, clean dislike count without bloat or broken layouts:
 
@@ -22,7 +22,7 @@ This fork is designed for Firefox users—especially on **Firefox for Android**�
 
 ---
 
-## 📖 The Story
+## The Story
 
 On November 10th, 2021, Google [announced](https://blog.youtube/news-and-events/update-to-youtube/) that the YouTube dislike count would be removed.
 
@@ -30,7 +30,7 @@ Additionally, the `dislike` field in the YouTube API was [removed](https://suppo
 
 ---
 
-## ⚙️ How It Works
+## How It Works
 
 With dislike statistics no longer exposed by YouTube's official API, the backend service calculates dislike counts using a combination of archived stats (scraped before the API shutdown) and proportional estimates extrapolated from active extension users.
 
@@ -40,7 +40,7 @@ With dislike statistics no longer exposed by YouTube's official API, the backend
 
 ---
 
-## 🔒 Privacy at a Glance
+## Privacy at a Glance
 
 This extension does not collect or sell personal data:
 - **No Third-Party Logins:** No account credentials, OAuth tokens, or subscriptions required.
@@ -49,7 +49,7 @@ This extension does not collect or sell personal data:
 
 ---
 
-## 🌐 API Reference
+## API Reference
 
 The extension relies on the public Return YouTube Dislike API:
 - **Base URL:** `https://returnyoutubedislikeapi.com`
@@ -76,7 +76,7 @@ Example request:
 
 ---
 
-## 🙏 Credits & Acknowledgments
+## Credits & Acknowledgments
 
 - **Dmitry Selivanov (Anarios)** and the [Return YouTube Dislike team](https://github.com/Anarios/return-youtube-dislike) for creating the original algorithm, backend, and extension.
 - **The RYD Community** for keeping the database alive and accurate.

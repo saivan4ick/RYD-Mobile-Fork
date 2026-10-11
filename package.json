@@ -1,0 +1,21 @@
+{
+  "name": "ryd-android-firefox",
+  "version": "1.0.0",
+  "description": "[![Mozilla downloads](https://img.shields.io/amo/users/ryd-mobile-fork?label=Firefox%20Users&style=flat&logo=firefox)](https://addons.mozilla.org/en-US/firefox/addon/ryd-mobile-fork/)\r [![Commit rate](https://img.shields.io/github/commit-activity/m/saivan4ick/RYD-Mobile-Fork?label=Commits&style=flat)](https://github.com/saivan4ick/RYD-Mobile-Fork/commits/main)\r [![Issues](https://img.shields.io/github/issues/saivan4ick/RYD-Mobile-Fork?style=flat&label=Issues)](https://github.com/saivan4ick/RYD-Mobile-Fork/issues)\r [![License](https://img.shields.io/badge/License-GPLv3-blue.svg?style=flat)](https://github.com/saivan4ick/RYD-Mobile-Fork/blob/main/LICENSE)\r # RYD Mobile Fork — Return YouTube Dislike for Firefox Mobile",
+  "main": "menu-fixer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saivan4ick/RYD-Mobile-Fork.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/saivan4ick/RYD-Mobile-Fork/issues"
+  },
+  "homepage": "https://github.com/saivan4ick/RYD-Mobile-Fork#readme"
+}
