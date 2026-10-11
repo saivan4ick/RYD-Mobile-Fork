@@ -157,15 +157,27 @@
         links: config.links
     };
     function localizeHtmlPage() {
-        var objects = document.getElementsByTagName("html");
-        for (var j = 0; j < objects.length; j++) {
-            var obj = objects[j];
-            var valStrH = obj.innerHTML.toString();
-            var valNewH = valStrH.replace(/__MSG_(\w+)__/g, function(match, v1) {
-                return v1 ? chrome.i18n.getMessage(v1) : "";
-            });
-            if (valNewH != valStrH) {
-                obj.innerHTML = valNewH;
+        var walker = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT, null, false);
+        var node;
+        while ((node = walker.nextNode())) {
+            if (node.nodeValue && node.nodeValue.indexOf("__MSG_") !== -1) {
+                node.nodeValue = node.nodeValue.replace(/__MSG_(\w+)__/g, function(match, v1) {
+                    return v1 ? chrome.i18n.getMessage(v1) : "";
+                });
+            }
+        }
+        var allElements = document.getElementsByTagName("*");
+        for (var i = 0; i < allElements.length; i++) {
+            var el = allElements[i];
+            var attrs = ["title", "placeholder", "alt", "aria-label"];
+            for (var a = 0; a < attrs.length; a++) {
+                var attrName = attrs[a];
+                var val = el.getAttribute(attrName);
+                if (val && val.indexOf("__MSG_") !== -1) {
+                    el.setAttribute(attrName, val.replace(/__MSG_(\w+)__/g, function(match, v1) {
+                        return v1 ? chrome.i18n.getMessage(v1) : "";
+                    }));
+                }
             }
         }
     }
@@ -613,6 +625,13 @@
         });
     }
     initPatreonAuth();
+    function setSvg(elem, svgStr) {
+        var parsed = new DOMParser().parseFromString(svgStr, "image/svg+xml");
+        elem.textContent = "";
+        if (parsed.documentElement) {
+            elem.appendChild(document.importNode(parsed.documentElement, true));
+        }
+    }
     const advancedToggle = document.getElementById("advancedToggle");
     advancedToggle.addEventListener("click", () => {
         const adv = document.getElementById("advancedSettings");
@@ -620,12 +639,12 @@
             adv.style.transform = "scale(1.1)";
             adv.style.pointerEvents = "none";
             adv.style.opacity = "0";
-            advancedToggle.innerHTML = popup_config.showAdvancedMessage;
+            setSvg(advancedToggle, popup_config.showAdvancedMessage);
         } else {
             adv.style.transform = "scale(1)";
             adv.style.pointerEvents = "auto";
             adv.style.opacity = "1";
-            advancedToggle.innerHTML = popup_config.hideAdvancedMessage;
+            setSvg(advancedToggle, popup_config.hideAdvancedMessage);
         }
         popup_config.advanced = !popup_config.advanced;
     });
@@ -646,7 +665,7 @@
     }
     function initializeVersionNumber() {
         const version = chrome.runtime.getManifest().version;
-        document.getElementById("ext-version").innerHTML = "v" + version;
+        document.getElementById("ext-version").textContent = "v" + version;
     }
     function initializeDisableVoteSubmission() {
         chrome.storage.sync.get([ "disableVoteSubmission" ], res => {
@@ -691,9 +710,9 @@
     }
     function updateNumberDisplayFormatContent() {
         let testValue = 123456;
-        document.getElementById("number_format_compactShort").innerHTML = getNumberFormatter("compactShort").format(testValue);
-        document.getElementById("number_format_compactLong").innerHTML = getNumberFormatter("compactLong").format(testValue);
-        document.getElementById("number_format_standard").innerHTML = getNumberFormatter("standard").format(testValue);
+        document.getElementById("number_format_compactShort").textContent = getNumberFormatter("compactShort").format(testValue);
+        document.getElementById("number_format_compactLong").textContent = getNumberFormatter("compactLong").format(testValue);
+        document.getElementById("number_format_standard").textContent = getNumberFormatter("standard").format(testValue);
     }
     function initializeNumberDisplayReformatLikes() {
         chrome.storage.sync.get([ "numberDisplayReformatLikes" ], res => {

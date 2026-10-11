@@ -651,7 +651,41 @@
                             colorDislikeStyle = "; background-color: " + getColorFromTheme(false);
                         }
                         const actions = buttons;
-                        (actions || bar_querySelector(bar_extConfig.selectors.rateBar.mobileActionBar)).insertAdjacentHTML("beforeend", `\n              <div data-ryd-ratebar-wrapper class="ryd-tooltip ryd-tooltip-${isNewDesign() ? "new" : "old"}-design" style="width: ${widthPx}px">\n              <div class="ryd-tooltip-bar-container">\n                <div\n                    id="ryd-bar-container"\n                    style="width: 100%; height: 2px;${colorDislikeStyle}"\n                    >\n                    <div\n                      id="ryd-bar"\n                      style="width: ${widthPercent}%; height: 100%${colorLikeStyle}"\n                      ></div>\n                </div>\n              </div>\n              <tp-yt-paper-tooltip position="top" id="ryd-dislike-tooltip" class="style-scope ytd-sentiment-bar-renderer" role="tooltip" tabindex="-1">\n                \x3c!--css-build:shady--\x3e${tooltipInnerHTML}\n              </tp-yt-paper-tooltip>\n              </div>\n          `);
+                        const targetBar = actions || bar_querySelector(bar_extConfig.selectors.rateBar.mobileActionBar);
+                        if (targetBar) {
+                            const rateBarWrapper = document.createElement("div");
+                            rateBarWrapper.setAttribute("data-ryd-ratebar-wrapper", "");
+                            rateBarWrapper.className = `ryd-tooltip ryd-tooltip-${isNewDesign() ? "new" : "old"}-design`;
+                            rateBarWrapper.style.width = widthPx + "px";
+                            const barContainerOuter = document.createElement("div");
+                            barContainerOuter.className = "ryd-tooltip-bar-container";
+                            const barContainer = document.createElement("div");
+                            barContainer.id = "ryd-bar-container";
+                            barContainer.style.width = "100%";
+                            barContainer.style.height = "2px";
+                            if (bar_extConfig.coloredBar) {
+                                barContainer.style.backgroundColor = getColorFromTheme(false);
+                            }
+                            const barFill = document.createElement("div");
+                            barFill.id = "ryd-bar";
+                            barFill.style.width = widthPercent + "%";
+                            barFill.style.height = "100%";
+                            if (bar_extConfig.coloredBar) {
+                                barFill.style.backgroundColor = getColorFromTheme(true);
+                            }
+                            barContainer.appendChild(barFill);
+                            barContainerOuter.appendChild(barContainer);
+                            rateBarWrapper.appendChild(barContainerOuter);
+                            const tooltipElem = document.createElement("tp-yt-paper-tooltip");
+                            tooltipElem.setAttribute("position", "top");
+                            tooltipElem.id = "ryd-dislike-tooltip";
+                            tooltipElem.className = "style-scope ytd-sentiment-bar-renderer";
+                            tooltipElem.setAttribute("role", "tooltip");
+                            tooltipElem.setAttribute("tabindex", "-1");
+                            tooltipElem.textContent = tooltipInnerHTML.replace(/&nbsp;/g, " ");
+                            rateBarWrapper.appendChild(tooltipElem);
+                            targetBar.appendChild(rateBarWrapper);
+                        }
                         getRateBarParts(buttons).wrapper?.setAttribute("data-ryd-video-id", videoId);
                         if (isNewDesign()) {
                             const descriptionAndActionsElement = findInCurrentWatchTree(buttons, bar_extConfig.selectors.rateBar.topRow);
@@ -667,7 +701,7 @@
                         currentParts.fill.style.width = widthPercent + "%";
                         const tooltipHost = buttons.querySelector("#ryd-dislike-tooltip");
                         const tooltip = tooltipHost?.querySelector("#tooltip") ?? tooltipHost;
-                        if (tooltip) tooltip.innerHTML = tooltipInnerHTML;
+                        if (tooltip) tooltip.textContent = tooltipInnerHTML.replace(/&nbsp;/g, " ");
                         if (bar_extConfig.coloredBar) {
                             currentParts.rateBar.style.backgroundColor = getColorFromTheme(false);
                             currentParts.fill.style.backgroundColor = getColorFromTheme(true);
@@ -1631,13 +1665,23 @@
             }
         }
         function localizeHtmlPage() {
-            const elements = document.getElementsByTagName("html");
-            for (let index = 0; index < elements.length; index += 1) {
-                const element = elements[index];
-                const original = element.innerHTML.toString();
-                const localized = original.replace(/__MSG_(\w+)__/g, (match, key) => key ? utils_localize(key) : "");
-                if (localized !== original) {
-                    element.innerHTML = localized;
+            const walker = document.createTreeWalker(document.documentElement, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            while ((node = walker.nextNode())) {
+                if (node.nodeValue && node.nodeValue.indexOf("__MSG_") !== -1) {
+                    node.nodeValue = node.nodeValue.replace(/__MSG_(\w+)__/g, (match, key) => key ? utils_localize(key) : "");
+                }
+            }
+            const allElements = document.getElementsByTagName("*");
+            for (let i = 0; i < allElements.length; i++) {
+                const el = allElements[i];
+                const attrs = ["title", "placeholder", "alt", "aria-label"];
+                for (let a = 0; a < attrs.length; a++) {
+                    const attrName = attrs[a];
+                    const val = el.getAttribute(attrName);
+                    if (val && val.indexOf("__MSG_") !== -1) {
+                        el.setAttribute(attrName, val.replace(/__MSG_(\w+)__/g, (match, key) => key ? utils_localize(key) : ""));
+                    }
                 }
             }
         }

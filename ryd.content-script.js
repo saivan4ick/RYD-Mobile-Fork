@@ -1,4 +1,26 @@
 (() => {
+    function __ryd_safeSetHTML(el, str) {
+        if (!el) return;
+        if (typeof str !== "string") {
+            el.textContent = "";
+            if (str && str.nodeType) el.appendChild(str);
+            return;
+        }
+        var doc = new DOMParser().parseFromString(str, "text/html");
+        el.textContent = "";
+        while (doc.body.firstChild) {
+            el.appendChild(doc.body.firstChild);
+        }
+    }
+    function __ryd_safeSetSVG(el, str) {
+        if (!el) return;
+        var doc = new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + str + '</svg>', "image/svg+xml");
+        el.textContent = "";
+        while (doc.documentElement.firstChild) {
+            el.appendChild(doc.documentElement.firstChild);
+        }
+    }
+
     var __webpack_modules__ = {
         632(module, __unused_webpack___webpack_exports__, __webpack_require__) {
             "use strict";
@@ -483,8 +505,41 @@
                                 colorDislikeStyle = "; background-color: " + (0, _utils__WEBPACK_IMPORTED_MODULE_2__.dH)(false);
                             }
                             const actions = buttons;
-                            (actions || (0, _utils__WEBPACK_IMPORTED_MODULE_2__.iT)(_state__WEBPACK_IMPORTED_MODULE_1__.az.selectors.rateBar.mobileActionBar)).insertAdjacentHTML("beforeend", `\n              <div data-ryd-ratebar-wrapper class="ryd-tooltip ryd-tooltip-${(0, 
-                            _state__WEBPACK_IMPORTED_MODULE_1__.TM)() ? "new" : "old"}-design" style="width: ${widthPx}px">\n              <div class="ryd-tooltip-bar-container">\n                <div\n                    id="ryd-bar-container"\n                    style="width: 100%; height: 2px;${colorDislikeStyle}"\n                    >\n                    <div\n                      id="ryd-bar"\n                      style="width: ${widthPercent}%; height: 100%${colorLikeStyle}"\n                      ></div>\n                </div>\n              </div>\n              <tp-yt-paper-tooltip position="top" id="ryd-dislike-tooltip" class="style-scope ytd-sentiment-bar-renderer" role="tooltip" tabindex="-1">\n                \x3c!--css-build:shady--\x3e${tooltipInnerHTML}\n              </tp-yt-paper-tooltip>\n              </div>\n          `);
+                            const targetBar = actions || (0, _utils__WEBPACK_IMPORTED_MODULE_2__.iT)(_state__WEBPACK_IMPORTED_MODULE_1__.az.selectors.rateBar.mobileActionBar);
+                            if (targetBar) {
+                                const rateBarWrapper = document.createElement("div");
+                                rateBarWrapper.setAttribute("data-ryd-ratebar-wrapper", "");
+                                rateBarWrapper.className = `ryd-tooltip ryd-tooltip-${(0, _state__WEBPACK_IMPORTED_MODULE_1__.TM)() ? "new" : "old"}-design`;
+                                rateBarWrapper.style.width = widthPx + "px";
+                                const barContainerOuter = document.createElement("div");
+                                barContainerOuter.className = "ryd-tooltip-bar-container";
+                                const barContainer = document.createElement("div");
+                                barContainer.id = "ryd-bar-container";
+                                barContainer.style.width = "100%";
+                                barContainer.style.height = "2px";
+                                if (_state__WEBPACK_IMPORTED_MODULE_1__.az.coloredBar) {
+                                    barContainer.style.backgroundColor = (0, _utils__WEBPACK_IMPORTED_MODULE_2__.dH)(false);
+                                }
+                                const barFill = document.createElement("div");
+                                barFill.id = "ryd-bar";
+                                barFill.style.width = widthPercent + "%";
+                                barFill.style.height = "100%";
+                                if (_state__WEBPACK_IMPORTED_MODULE_1__.az.coloredBar) {
+                                    barFill.style.backgroundColor = (0, _utils__WEBPACK_IMPORTED_MODULE_2__.dH)(true);
+                                }
+                                barContainer.appendChild(barFill);
+                                barContainerOuter.appendChild(barContainer);
+                                rateBarWrapper.appendChild(barContainerOuter);
+                                const tooltipElem = document.createElement("tp-yt-paper-tooltip");
+                                tooltipElem.setAttribute("position", "top");
+                                tooltipElem.id = "ryd-dislike-tooltip";
+                                tooltipElem.className = "style-scope ytd-sentiment-bar-renderer";
+                                tooltipElem.setAttribute("role", "tooltip");
+                                tooltipElem.setAttribute("tabindex", "-1");
+                                tooltipElem.textContent = tooltipInnerHTML.replace(/&nbsp;/g, " ");
+                                rateBarWrapper.appendChild(tooltipElem);
+                                targetBar.appendChild(rateBarWrapper);
+                            }
                             getRateBarParts(buttons).wrapper?.setAttribute("data-ryd-video-id", videoId);
                             if ((0, _state__WEBPACK_IMPORTED_MODULE_1__.TM)()) {
                                 const descriptionAndActionsElement = findInCurrentWatchTree(buttons, _state__WEBPACK_IMPORTED_MODULE_1__.az.selectors.rateBar.topRow);
@@ -500,7 +555,7 @@
                             currentParts.fill.style.width = widthPercent + "%";
                             const tooltipHost = buttons.querySelector("#ryd-dislike-tooltip");
                             const tooltip = tooltipHost?.querySelector("#tooltip") ?? tooltipHost;
-                            if (tooltip) tooltip.innerHTML = tooltipInnerHTML;
+                            if (tooltip) tooltip.textContent = tooltipInnerHTML.replace(/&nbsp;/g, " ");
                             if (_state__WEBPACK_IMPORTED_MODULE_1__.az.coloredBar) {
                                 currentParts.rateBar.style.backgroundColor = (0, _utils__WEBPACK_IMPORTED_MODULE_2__.dH)(false);
                                 currentParts.fill.style.backgroundColor = (0, _utils__WEBPACK_IMPORTED_MODULE_2__.dH)(true);
@@ -1504,7 +1559,7 @@
                 }
                 const panel = document.createElement("section");
                 panel.className = "ryd-premium-analytics ryd-premium-feature";
-                panel.innerHTML = createPanelMarkup();
+                __ryd_safeSetHTML(panel, createPanelMarkup());
                 secondaryInner.insertBefore(panel, secondaryInner.firstChild);
                 analyticsState.panelElement = panel;
                 bindUiControls(panel);
@@ -1596,11 +1651,11 @@
                 const formattedIps = uniqueIps.toLocaleString();
                 const periodMarkup = periodLabel ? `<span class="ryd-analytics__period-label">${(0, 
                 utils.kg)("premiumAnalytics_selectedPeriod", [ periodLabel ])}</span>` : "";
-                footer.innerHTML = `\n    <div class="ryd-analytics__totals" role="status" aria-live="polite">\n      <div class="ryd-analytics__totals-header">\n        <span class="ryd-analytics__totals-label">${(0, 
+                __ryd_safeSetHTML(footer, `\n    <div class="ryd-analytics__totals" role="status" aria-live="polite">\n      <div class="ryd-analytics__totals-header">\n        <span class="ryd-analytics__totals-label">${(0, 
                 utils.kg)("premiumAnalytics_totalsHeading")}</span>\n        ${periodMarkup}\n      </div>\n      <div class="ryd-analytics__totals-values">\n        <span class="ryd-analytics__totals-value ryd-analytics__totals-likes">${(0, 
                 utils.kg)("premiumAnalytics_totalsLikes", [ formattedLikes ])}</span>\n        <span class="ryd-analytics__totals-divider" aria-hidden="true">•</span>\n        <span class="ryd-analytics__totals-value ryd-analytics__totals-dislikes">${(0, 
                 utils.kg)("premiumAnalytics_totalsDislikes", [ formattedDislikes ])}</span>\n      </div>\n    </div>\n    <div class="ryd-analytics__summary-meta">\n      ${(0, 
-                utils.kg)("premiumAnalytics_summaryMeta", [ formattedInteractions, formattedCountries, formattedIps ])}\n    </div>\n  `;
+                utils.kg)("premiumAnalytics_summaryMeta", [ formattedInteractions, formattedCountries, formattedIps ])}\n    </div>\n  `);
             }
             function bindUiControls(container) {
                 container.querySelectorAll(".ryd-range").forEach(btn => {
@@ -24413,7 +24468,7 @@
                                 var y = item.top - top_1;
                                 content_1 += '<g transform="translate(' + x + "," + y + ')">' + item.dom + "</g>";
                             });
-                            zr_1.painter.getSvgRoot().innerHTML = content_1;
+                            __ryd_safeSetSVG(zr_1.painter.getSvgRoot(), content_1);
                             if (opts.connectedBackgroundColor) {
                                 zr_1.painter.setBackgroundColor(opts.connectedBackgroundColor);
                             }
@@ -41370,7 +41425,7 @@
                 return rect;
             }
             function parseInput(source) {
-                return !isString(source) ? source : typeof JSON !== "undefined" && JSON.parse ? JSON.parse(source) : new Function("return (" + source + ");")();
+                return !isString(source) ? source : JSON.parse(source);
             }
             var storage = createHashMap();
             const geoSourceManager = {
@@ -62264,10 +62319,16 @@
                             }
                         } else {
                             var lang = model.get("lang");
-                            var html = "" + '<body style="margin:0;">' + '<img src="' + url + '" style="max-width:100%;" title="' + (lang && lang[0] || "") + '" />' + "</body>";
                             var tab = window.open();
-                            tab.document.write(html);
-                            tab.document.title = title;
+                            if (tab && tab.document) {
+                                var img = tab.document.createElement("img");
+                                img.src = url;
+                                img.style.maxWidth = "100%";
+                                img.title = lang && lang[0] || "";
+                                tab.document.body.style.margin = "0";
+                                tab.document.body.appendChild(img);
+                                tab.document.title = title;
+                            }
                         }
                     }
                 };
@@ -62639,7 +62700,7 @@
                     root.style.backgroundColor = model.get("backgroundColor") || "#fff";
                     var header = document.createElement("h4");
                     var lang = model.get("lang") || [];
-                    header.innerHTML = lang[0] || model.get("title");
+                    header.textContent = lang[0] || model.get("title");
                     header.style.cssText = "margin:10px 20px";
                     header.style.color = model.get("textColor");
                     var viewMain = document.createElement("div");
@@ -62651,7 +62712,7 @@
                     if (isFunction(optionToContent)) {
                         var htmlOrDom = optionToContent(api.getOption());
                         if (isString(htmlOrDom)) {
-                            viewMain.innerHTML = htmlOrDom;
+                            __ryd_safeSetHTML(viewMain, htmlOrDom);
                         } else if (isDom(htmlOrDom)) {
                             viewMain.appendChild(htmlOrDom);
                         }
@@ -62704,8 +62765,8 @@
                         }
                         close();
                     });
-                    closeButton.innerHTML = lang[1];
-                    refreshButton.innerHTML = lang[2];
+                    closeButton.textContent = lang[1];
+                    refreshButton.textContent = lang[2];
                     refreshButton.style.cssText = closeButton.style.cssText = buttonStyle;
                     !model.get("readOnly") && buttonContainer.appendChild(refreshButton);
                     buttonContainer.appendChild(closeButton);
@@ -63611,7 +63672,7 @@
                         arrow = assembleArrow(tooltipModel, borderColor, arrowPosition);
                     }
                     if (isString(content)) {
-                        el.innerHTML = content + arrow;
+                        __ryd_safeSetHTML(el, content + arrow);
                     } else if (content) {
                         el.innerHTML = "";
                         if (!isArray(content)) {
@@ -63624,7 +63685,7 @@
                         }
                         if (arrow && el.childNodes.length) {
                             var arrowEl = document.createElement("div");
-                            arrowEl.innerHTML = arrow;
+                            __ryd_safeSetHTML(arrowEl, arrow);
                             el.appendChild(arrowEl);
                         }
                     }
@@ -75336,7 +75397,7 @@
                 }
                 const panel = document.createElement("section");
                 panel.className = "ryd-premium-teaser is-collapsed";
-                panel.innerHTML = teaser_createPanelMarkup();
+                __ryd_safeSetHTML(panel, teaser_createPanelMarkup());
                 container.insertBefore(panel, container.firstChild);
                 const dismissButton = panel.querySelector("#ryd-premium-teaser-close");
                 if (dismissButton) {
@@ -75528,7 +75589,7 @@
                     container.insertBefore(panel, container.firstChild);
                     noticeState.panelElement = panel;
                 }
-                panel.innerHTML = tierNotice_createPanelMarkup();
+                __ryd_safeSetHTML(panel, tierNotice_createPanelMarkup());
                 wireCta(panel);
             }
             function tierNotice_createPanelMarkup() {

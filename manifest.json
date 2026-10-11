@@ -2,6 +2,7 @@
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDesc__",
   "default_locale": "en",
+  "author": "saivan4ick",
   "version": "4.0.6",
   "manifest_version": 2,
   "incognito": "not_allowed",
@@ -23,8 +24,13 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "{762f9885-5a13-4abd-9c77-433dcd38b8fd}",
-      "strict_min_version": "57.0"
+      "id": "{b8bf6232-36ea-4af9-b14a-77dde540fa97}",
+      "strict_min_version": "58.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
     }
   },
   "browser_action": {
